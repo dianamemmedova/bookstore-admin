@@ -4,7 +4,6 @@ import { FullScreenSpinner } from './components/ui/Spinner'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
-import PlaceholderPage from './pages/PlaceholderPage'
 import BooksPage from './pages/BooksPage'
 import OrdersPage from './pages/OrdersPage'
 import UsersPage from './pages/UsersPage'
@@ -13,6 +12,7 @@ import GiftCardsPage from './pages/GiftCardsPage'
 import MessagesPage from './pages/MessagesPage'
 import StoresPage from './pages/StoresPage'
 import EventsPage from './pages/EventsPage'
+import NewsletterPage from './pages/NewsletterPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Giriş etməyibsə /login-ə atır (daxil olandan sonra qayıtmaq üçün yolu yadda saxlayır)
@@ -39,7 +39,7 @@ export default function App() {
           <Route path="users" element={<UsersPage />} />
           <Route path="promos" element={<PromosPage />} />
           <Route path="gift-cards" element={<GiftCardsPage />} />
-          <Route path="newsletter" element={<PlaceholderPage title="Bülleten" />} />
+          <Route path="newsletter" element={<NewsletterPage />} />
           <Route path="stores" element={<StoresPage />} />
           <Route path="events" element={<EventsPage />} />
           <Route path="messages" element={<MessagesPage />} />
