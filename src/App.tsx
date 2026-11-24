@@ -5,8 +5,10 @@ import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import PlaceholderPage from './pages/PlaceholderPage'
+import BooksPage from './pages/BooksPage'
 import NotFoundPage from './pages/NotFoundPage'
 
+// Giriş etməyibsə /login-ə atır (daxil olandan sonra qayıtmaq üçün yolu yadda saxlayır)
 function RequireAdmin() {
   const { user, loading } = useAuth()
   const location = useLocation()
@@ -25,7 +27,7 @@ export default function App() {
       <Route element={<RequireAdmin />}>
         <Route element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
-          <Route path="books" element={<PlaceholderPage title="Kitablar" />} />
+          <Route path="books" element={<BooksPage />} />
           <Route path="orders" element={<PlaceholderPage title="Sifarişlər" />} />
           <Route path="users" element={<PlaceholderPage title="İstifadəçilər" />} />
           <Route path="promos" element={<PlaceholderPage title="Promo kodlar" />} />
