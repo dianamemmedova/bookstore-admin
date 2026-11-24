@@ -11,6 +11,8 @@ import UsersPage from './pages/UsersPage'
 import PromosPage from './pages/PromosPage'
 import GiftCardsPage from './pages/GiftCardsPage'
 import MessagesPage from './pages/MessagesPage'
+import StoresPage from './pages/StoresPage'
+import EventsPage from './pages/EventsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Giriş etməyibsə /login-ə atır (daxil olandan sonra qayıtmaq üçün yolu yadda saxlayır)
@@ -38,8 +40,8 @@ export default function App() {
           <Route path="promos" element={<PromosPage />} />
           <Route path="gift-cards" element={<GiftCardsPage />} />
           <Route path="newsletter" element={<PlaceholderPage title="Bülleten" />} />
-          <Route path="stores" element={<PlaceholderPage title="Mağazalar" />} />
-          <Route path="events" element={<PlaceholderPage title="Tədbirlər" />} />
+          <Route path="stores" element={<StoresPage />} />
+          <Route path="events" element={<EventsPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
