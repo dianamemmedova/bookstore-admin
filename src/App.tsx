@@ -7,6 +7,10 @@ import DashboardPage from './pages/DashboardPage'
 import PlaceholderPage from './pages/PlaceholderPage'
 import BooksPage from './pages/BooksPage'
 import OrdersPage from './pages/OrdersPage'
+import UsersPage from './pages/UsersPage'
+import PromosPage from './pages/PromosPage'
+import GiftCardsPage from './pages/GiftCardsPage'
+import MessagesPage from './pages/MessagesPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Giriş etməyibsə /login-ə atır (daxil olandan sonra qayıtmaq üçün yolu yadda saxlayır)
@@ -30,13 +34,13 @@ export default function App() {
           <Route index element={<DashboardPage />} />
           <Route path="books" element={<BooksPage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="users" element={<PlaceholderPage title="İstifadəçilər" />} />
-          <Route path="promos" element={<PlaceholderPage title="Promo kodlar" />} />
-          <Route path="gift-cards" element={<PlaceholderPage title="Hədiyyə kartları" />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="promos" element={<PromosPage />} />
+          <Route path="gift-cards" element={<GiftCardsPage />} />
           <Route path="newsletter" element={<PlaceholderPage title="Bülleten" />} />
           <Route path="stores" element={<PlaceholderPage title="Mağazalar" />} />
           <Route path="events" element={<PlaceholderPage title="Tədbirlər" />} />
-          <Route path="messages" element={<PlaceholderPage title="Mesajlar" />} />
+          <Route path="messages" element={<MessagesPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
