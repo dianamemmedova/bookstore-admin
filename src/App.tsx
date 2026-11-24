@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import PlaceholderPage from './pages/PlaceholderPage'
 import BooksPage from './pages/BooksPage'
+import OrdersPage from './pages/OrdersPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Giriş etməyibsə /login-ə atır (daxil olandan sonra qayıtmaq üçün yolu yadda saxlayır)
@@ -28,7 +29,7 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="books" element={<BooksPage />} />
-          <Route path="orders" element={<PlaceholderPage title="Sifarişlər" />} />
+          <Route path="orders" element={<OrdersPage />} />
           <Route path="users" element={<PlaceholderPage title="İstifadəçilər" />} />
           <Route path="promos" element={<PlaceholderPage title="Promo kodlar" />} />
           <Route path="gift-cards" element={<PlaceholderPage title="Hədiyyə kartları" />} />
