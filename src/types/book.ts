@@ -15,6 +15,7 @@ export interface AdminBook {
   salePriceCents: number
   salePrice: number
   isAudiobook: boolean
+  hasAudio: boolean // audio fayl yüklənib
   inStock: boolean
   stock: number | null // null = limitsiz
   createdAt: string

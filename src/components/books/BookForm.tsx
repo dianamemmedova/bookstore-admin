@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { ImagePlus } from 'lucide-react'
+import { ImagePlus, Music } from 'lucide-react'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
@@ -50,6 +50,10 @@ function fromBook(b: AdminBook): FormState {
 }
 
 const MAX_COVER = 2 * 1024 * 1024
+const MAX_AUDIO = 200 * 1024 * 1024
+const AUDIO_EXT = /\.(mp3|m4a|ogg|wav)$/i
+
+const formatSize = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 
 // Modal hər açılanda yenidən qurulur (key ilə), ona görə state sıfırlama kodu lazım deyil
 export default function BookForm(props: Props) {
@@ -64,6 +68,9 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [coverError, setCoverError] = useState('')
+  const [audioFile, setAudioFile] = useState<File | null>(null)
+  const [audioError, setAudioError] = useState('')
+  const [removeAudio, setRemoveAudio] = useState(false)
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: value }))
@@ -78,6 +85,17 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
     if (coverPreview) URL.revokeObjectURL(coverPreview)
     setCoverFile(file)
     setCoverPreview(URL.createObjectURL(file))
+  }
+
+  const pickAudio = (file: File | undefined) => {
+    setAudioError('')
+    if (!file) return
+    if (!AUDIO_EXT.test(file.name)) return setAudioError('Yalnız MP3, M4A, OGG və ya WAV')
+    if (file.size > MAX_AUDIO) return setAudioError('Fayl 200 MB-dan böyük olmamalıdır')
+    setAudioFile(file)
+    setRemoveAudio(false)
+    // Audio seçəndə kitab avtomatik "Audio kitab" işarələnir
+    set('isAudiobook', true)
   }
 
   const submit = async (e: FormEvent) => {
@@ -123,6 +141,23 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
           return
         }
       }
+
+      if (audioFile || (removeAudio && book?.hasAudio)) {
+        try {
+          if (audioFile) {
+            const fd = new FormData()
+            fd.append('audio', audioFile)
+            await api(`/admin/books/${saved.id}/audio`, { method: 'POST', formData: fd })
+          } else {
+            await api(`/admin/books/${saved.id}/audio`, { method: 'DELETE' })
+          }
+        } catch (err) {
+          toast.error(`Kitab saxlandı, amma audio ${audioFile ? 'yüklənmədi' : 'silinmədi'}: ${err instanceof ApiError ? err.message : 'xəta'}`)
+          onSaved()
+          return
+        }
+      }
+
       toast.success(book ? 'Kitab yeniləndi' : 'Kitab əlavə olundu')
       onSaved()
     } catch (err) {
@@ -189,6 +224,32 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
           <Input label="Səhifə sayı" name="pages" inputMode="numeric" value={form.pages} onChange={(e) => set('pages', e.target.value)} error={errors.pages} />
           <Input className="sm:col-span-2" label="Janrlar" name="subjects" value={form.subjects} onChange={(e) => set('subjects', e.target.value)} error={errors.subjects} hint="Vergüllə ayırın: fantasy, romance" />
           <Textarea className="sm:col-span-2" label="Təsvir" name="description" rows={4} value={form.description} onChange={(e) => set('description', e.target.value)} error={errors.description} />
+
+          <div className="sm:col-span-2 rounded-lg border border-dashed border-line p-3">
+            <p className="mb-2 text-sm font-medium text-ink">Audio fayl</p>
+            {book?.hasAudio && !audioFile && !removeAudio && (
+              <div className="mb-2 flex items-center justify-between rounded-md bg-success-soft px-3 py-2 text-xs text-success">
+                <span>✓ Audio fayl yüklənib</span>
+                <button type="button" className="font-semibold underline" onClick={() => setRemoveAudio(true)}>Faylı sil</button>
+              </div>
+            )}
+            {removeAudio && (
+              <div className="mb-2 flex items-center justify-between rounded-md bg-warning-soft px-3 py-2 text-xs text-warning">
+                <span>Fayl “Yadda saxla” basanda silinəcək</span>
+                <button type="button" className="font-semibold underline" onClick={() => setRemoveAudio(false)}>Ləğv et</button>
+              </div>
+            )}
+            <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-muted hover:text-primary">
+              <Music size={14} />
+              {audioFile ? `${audioFile.name} (${formatSize(audioFile.size)})` : book?.hasAudio ? 'Başqa audio fayl seç (köhnəsi əvəz olunacaq)' : 'Audio fayl seç'}
+              <input type="file" accept=".mp3,.m4a,.ogg,.wav,audio/*" className="hidden" onChange={(e) => pickAudio(e.target.files?.[0])} />
+            </label>
+            {audioError ? (
+              <p className="mt-1 text-xs text-danger">{audioError}</p>
+            ) : (
+              <p className="mt-1 text-xs text-muted">MP3, M4A, OGG, WAV, ən çox 200 MB. Böyük fayl bir neçə dəqiqə çəkə bilər. Fayl yalnız kitabı alanlara açılır.</p>
+            )}
+          </div>
         </div>
       </form>
     </Modal>
