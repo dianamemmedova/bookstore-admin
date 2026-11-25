@@ -180,11 +180,22 @@ export default function BooksPage() {
                     </td>
                     <td className="px-3 py-3">
                       <div className="flex max-w-[200px] flex-wrap gap-1">
+                        {b.isAudiobook && <Badge tone="info">🎧 Audio</Badge>}
                         {b.subjects.slice(0, 3).map((s) => <Badge key={s}>{s}</Badge>)}
                         {b.subjects.length > 3 && <span className="text-xs text-muted">+{b.subjects.length - 3}</span>}
                       </div>
                     </td>
-                    <td className="px-3 py-3 font-medium text-ink whitespace-nowrap">{formatMoney(b.priceCents)}</td>
+                    <td className="px-3 py-3 font-medium text-ink whitespace-nowrap">
+                      {b.discountPercent > 0 ? (
+                        <>
+                          <span className="mr-1 text-xs text-muted line-through">{formatMoney(b.priceCents)}</span>
+                          {formatMoney(b.salePriceCents)}
+                          <Badge tone="warning">-{b.discountPercent}%</Badge>
+                        </>
+                      ) : (
+                        formatMoney(b.priceCents)
+                      )}
+                    </td>
                     <td className="px-3 py-3"><StockBadge stock={b.stock} /></td>
                     <td className="px-5 py-3">
                       <div className="flex justify-end gap-1">

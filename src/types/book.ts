@@ -11,6 +11,10 @@ export interface AdminBook {
   subjects: string[]
   priceCents: number
   price: number
+  discountPercent: number // 0 = endirim yoxdur
+  salePriceCents: number
+  salePrice: number
+  isAudiobook: boolean
   inStock: boolean
   stock: number | null // null = limitsiz
   createdAt: string

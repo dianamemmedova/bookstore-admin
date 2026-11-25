@@ -21,6 +21,8 @@ interface FormState {
   title: string
   author: string
   price: string
+  discount: string
+  isAudiobook: boolean
   unlimited: boolean
   stock: string
   year: string
@@ -29,13 +31,15 @@ interface FormState {
   description: string
 }
 
-const EMPTY: FormState = { title: '', author: '', price: '', unlimited: false, stock: '10', year: '', pages: '', subjects: '', description: '' }
+const EMPTY: FormState = { title: '', author: '', price: '', discount: '0', isAudiobook: false, unlimited: false, stock: '10', year: '', pages: '', subjects: '', description: '' }
 
 function fromBook(b: AdminBook): FormState {
   return {
     title: b.title,
     author: b.author,
     price: String(b.price),
+    discount: String(b.discountPercent),
+    isAudiobook: b.isAudiobook,
     unlimited: b.stock === null,
     stock: b.stock === null ? '10' : String(b.stock),
     year: b.year ? String(b.year) : '',
@@ -83,6 +87,7 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
     if (!form.title.trim()) next.title = 'Ad boş ola bilməz'
     if (!form.author.trim()) next.author = 'Müəllif boş ola bilməz'
     if (!form.price.trim() || !Number.isFinite(price) || price <= 0) next.price = 'Qiymət 0-dan böyük olmalıdır'
+    if (!/^\d+$/.test(form.discount) || Number(form.discount) > 90) next.discountPercent = 'Endirim 0–90 arasında tam ədəd olmalıdır'
     if (!form.unlimited && !/^\d+$/.test(form.stock)) next.stock = 'Stok tam ədəd olmalıdır'
     if (form.year && !/^\d{4}$/.test(form.year)) next.year = 'İl 4 rəqəm olmalıdır'
     if (form.pages && !/^\d+$/.test(form.pages)) next.pages = 'Səhifə sayı tam ədəd olmalıdır'
@@ -92,6 +97,8 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
       title: form.title.trim(),
       author: form.author.trim(),
       price,
+      discountPercent: Number(form.discount),
+      isAudiobook: form.isAudiobook,
       stock: form.unlimited ? null : Number(form.stock),
       year: form.year ? Number(form.year) : null,
       pages: form.pages ? Number(form.pages) : null,
@@ -161,6 +168,16 @@ function BookFormInner({ open, book, onClose, onSaved }: Props) {
           <Input className="sm:col-span-2" label="Ad *" name="title" value={form.title} onChange={(e) => set('title', e.target.value)} error={errors.title} />
           <Input className="sm:col-span-2" label="Müəllif *" name="author" value={form.author} onChange={(e) => set('author', e.target.value)} error={errors.author} />
           <Input label="Qiymət (₼) *" name="price" inputMode="decimal" value={form.price} onChange={(e) => set('price', e.target.value)} error={errors.price} />
+          <div>
+            <Input label="Endirim (%)" name="discountPercent" inputMode="numeric" value={form.discount} onChange={(e) => set('discount', e.target.value)} error={errors.discountPercent} />
+            {Number(form.discount) > 0 && Number(form.discount) <= 90 && Number(form.price.replace(',', '.')) > 0 && (
+              <p className="mt-1 text-xs text-muted">Satış qiyməti: {(Math.round(Number(form.price.replace(',', '.')) * (100 - Number(form.discount))) / 100).toFixed(2)} ₼</p>
+            )}
+          </div>
+          <label className="flex items-center gap-2 self-center text-sm text-ink">
+            <input type="checkbox" checked={form.isAudiobook} onChange={(e) => set('isAudiobook', e.target.checked)} className="accent-[var(--primary)]" />
+            Audio kitab
+          </label>
           <div>
             <Input label="Stok" name="stock" inputMode="numeric" value={form.stock} disabled={form.unlimited} onChange={(e) => set('stock', e.target.value)} error={errors.stock} />
             <label className="mt-1.5 flex items-center gap-2 text-xs text-muted">
